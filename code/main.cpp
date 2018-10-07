@@ -15,56 +15,60 @@
 using namespace std;
 #define faster  ios_base::sync_with_stdio(false); cin.tie(NULL)
 
+double findDistance (int x1, int y1, int x2, int y2) {
+    double ans = sqrt(pow((x1-x2), 2) + pow((y1-y2), 2));
+    return ans;
+}
+
 int main(){
     freopen("/Users/mithoon.k/Documents/github-repo/ds-algo-code/code/code/input.txt","r",stdin);
     faster;
-    long long t;
-    cin>>t;
-    long long arr [17][4] ;
-    long long answer [1601][3];
-    for (long long i = 0; i < 17; i++) {
-        for (long long j = 0; j < 4; j++) {
+    
+    int n,q;
+    cin>>n>>q;
+    int arr [n][3];
+    for (int i = 0 ; i < n; i++) {
+        for (int j = 0 ; j < 3; j++) {
             arr[i][j] = 0;
         }
     }
-    arr[1][1] = 1;
-    answer[0][0] = 1;
-    answer[0][1] = 0;
-    answer[0][2] = 0;
-    
-    for (long long i = 1; i <= 1600; i++) {
-        long long first = arr[2][1];
-        arr[2][1] = arr[1][1];
-        long long second = arr[8][2];
-        for (long long j = 7; j >= 1; j--) {
-            arr[j+1][2] = arr[j][2];
-        }
-        long long third = 2* arr[16][3];
-        for (long long j = 15; j >= 1; j--) {
-            arr[j+1][3] = arr[j][3];
-        }
-        arr[1][1] = third;
-        arr[1][2] = first;
-        arr[1][3] = second;
-        long long bit = arr[1][1] + arr[2][1];
-        long long nibble = 0 ;
-        for (long long j = 1; j <= 8; j++) {
-            nibble+=arr[j][2];
-        }
-        long long byte = 0 ;
-        for (long long j = 1; j <= 16; j++) {
-            byte+=arr[j][3];
-        }
-        answer[i][0] = bit;
-        answer[i][1] = nibble;
-        answer[i][2] = byte;
+    int answer [1000006] = {0};
+    for (int i = 0; i < n ; i++) {
+        cin>>arr[i][0]>>arr[i][1]>>arr[i][2];
     }
     
-    while(t--) {
-        long long n;
-        cin>>n;
-        cout<<answer[n-1][0]<<" "<<answer[n-1][1]<<" "<<answer[n-1][2]<<endl;
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            if (i == j) {
+                continue;
+            }
+            //deciding the relative positions of the circles
+            double dbcs = findDistance(arr[i][0], arr[i][1], arr[j][0], arr[j][1]);
+            double sumOfRadii = arr[i][2] + arr[j][2];
+            double maxValue = sumOfRadii + dbcs;
+            double minValue = 0;
+            double R = max(arr[i][2], arr[j][2]);
+            double r = min(arr[i][2], arr[j][2]);
+            if (sumOfRadii < dbcs) {
+                minValue = dbcs - sumOfRadii;
+            } else if (dbcs < R - r) {
+                minValue = R - dbcs -r;
+            } else {
+                minValue = 0;
+            }
+            int maxValueI = floor(maxValue);
+            int minValueI = floor(minValue);
+            answer[minValueI]+=1;
+            answer[maxValueI+1]-=1;
+        }
     }
-    
+    for (int i = 1; i < 1000006; i++) {
+        answer[i] = answer[i] + answer[i-1];
+    }
+    while(q--) {
+        int k;
+        cin>>k;
+        cout<<answer[k] / 2<<endl;
+    }
     return 0;
 }
