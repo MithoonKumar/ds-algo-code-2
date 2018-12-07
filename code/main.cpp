@@ -15,27 +15,40 @@
 using namespace std;
 #define faster  ios_base::sync_with_stdio(false); cin.tie(NULL)
 
-int dpCalculate(int n, int k) {
-    int arr[n+1][k+1];
-    for(int i = 0; i <= n; i++) {
-        for(int j = 0; j <= min(j,k); j++) {
-            if (j == 0 ) {
-                arr[i][j] = 1;
-            } else {
-                arr[i][j] = arr[i-1][j] + (j* arr[i-1][j-1]);
-            }
-            arr[i][j+1] = 0;
-        }
-    }
-    return arr[n][k];
-}
 
 int main(){
     freopen("/Users/mithoon.k/Documents/github-repo/ds-algo-code/code/code/input.txt","r",stdin);
     faster;
-    int n,k;
-    n = 10;
-    k = 2;
-    cout<<dpCalculate(n, k);
+    int r, c;
+    cin>>r>>c;
+    int arr[r][c];
+    for(int i=0; i<r; i++) {
+        for(int j=0; j<c; j++) {
+            cin>>arr[i][j];
+        }
+    }
+    
+    for (int j=1; j<c; j++) {
+        for(int i=0; i<r; i++) {
+            int upVal, downVal, midVal;
+            upVal = -1;
+            downVal = -1;
+            midVal = -1;
+            if (i-1>=0) {
+                upVal = arr[i-1][j-1];
+            }
+            if (i+1<=r-1) {
+                downVal = arr[i+1][j-1];
+            }
+            midVal = arr[i][j-1];
+            int maxVal = max(max(upVal, downVal), midVal);
+            arr[i][j] = arr[i][j] + maxVal;
+        }
+    }
+    int ans = -1;
+    for (int i=0; i<r; i++) {
+        ans = ans>arr[i][c-1] ? ans : arr[i][c-1];
+    }
+    cout<<ans<<endl;
     return 0;
 }
