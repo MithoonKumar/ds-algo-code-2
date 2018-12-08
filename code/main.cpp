@@ -14,41 +14,40 @@
 #include<stdio.h>
 using namespace std;
 #define faster  ios_base::sync_with_stdio(false); cin.tie(NULL)
+int globalArr [100][100];
 
+int dpCalculate(int S[], int m, int n) {
+    if (m<=0 && n>0){
+        return 0;
+    }
+    if (n<0) {
+        return 0;
+    }
+    int first = globalArr[m-1][n]>0?globalArr[m-1][n]:dpCalculate(S, m-1, n);
+    globalArr[m-1][n] = first;
+    int second = globalArr[m][n-S[m-1]]>0?globalArr[m][n-S[m-1]]:dpCalculate(S, m, n-S[m-1]);
+    globalArr[m][n-S[m-1]] = second;
+    return first + second;
+}
 
 int main(){
     freopen("/Users/mithoon.k/Documents/github-repo/ds-algo-code/code/code/input.txt","r",stdin);
     faster;
-    int r, c;
-    cin>>r>>c;
-    int arr[r][c];
-    for(int i=0; i<r; i++) {
-        for(int j=0; j<c; j++) {
-            cin>>arr[i][j];
+    int n, k;
+    cin>>n>>k;
+    int arr[k];
+    for (int i=0; i<k; i++) {
+        cin>>arr[i];
+    }
+    for (int i=0; i<=k; i++) {
+        for(int j=0; j<=n; j++) {
+            globalArr[i][j] = -1;
+            if (j==0) {
+                globalArr[i][j] = 1;
+            }
         }
     }
+    cout<<dpCalculate(arr, k, n);
     
-    for (int j=1; j<c; j++) {
-        for(int i=0; i<r; i++) {
-            int upVal, downVal, midVal;
-            upVal = -1;
-            downVal = -1;
-            midVal = -1;
-            if (i-1>=0) {
-                upVal = arr[i-1][j-1];
-            }
-            if (i+1<=r-1) {
-                downVal = arr[i+1][j-1];
-            }
-            midVal = arr[i][j-1];
-            int maxVal = max(max(upVal, downVal), midVal);
-            arr[i][j] = arr[i][j] + maxVal;
-        }
-    }
-    int ans = -1;
-    for (int i=0; i<r; i++) {
-        ans = ans>arr[i][c-1] ? ans : arr[i][c-1];
-    }
-    cout<<ans<<endl;
     return 0;
 }
