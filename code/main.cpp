@@ -15,52 +15,39 @@
 using namespace std;
 #define faster  ios_base::sync_with_stdio(false); cin.tie(NULL)
 
-bool dpCalculate(int S[], int n, int sum) {
-    bool arr[n+1][sum+1];
-    for(int i=0; i<=n; i++) {
-        for(int j=0; j<=n; j++) {
-            if(j==0) {
-                arr[i][j] = true;
-            } else {
-                arr[i][j]=false;
-            }
-        }
+struct node {
+    int val;
+    node * left;
+    node * right;
+    node(int val) {
+        this->val = val;
+        this->left = NULL;
+        this->right = NULL;
     }
-    for(int i=0; i<=n; i++) {
-        cout<<S[i]<<" ";
+};
+
+int getSizeOfTree(node * root) {
+    if (root == NULL) {
+        return 0;
+    } else {
+        return 1 + getSizeOfTree(root->left) + getSizeOfTree(root->right);
     }
-    cout<<endl;
-    for (int i=1; i<=n; i++) {
-        for (int j=1; j<=sum; j++) {
-            bool left = arr[i-1][j];
-            bool right = j-S[i-1]>=0 ? arr[i-1][j-S[i-1]]: false;
-            arr[i][j] = left || right;
-        }
-    }
-    
-//    if (sum == 0) {
-//        return true;
-//    }
-//    if (sum<=0) {
-//        return false;
-//    }
-//    if (n==0) {
-//        return false;
-//    }
-//    return dpCalculate(S, n-1, sum) || dpCalculate(S, n-1, sum-S[n-1]);
-    return arr[n][sum];
 }
 
 int main(){
     freopen("/Users/mithoon.k/Documents/github-repo/ds-algo-code/code/code/input.txt","r",stdin);
     faster;
-    int n, sum;
-    cin>>n;
-    int arr[n];
-    for(int i=0; i<n; i++) {
-        cin>>arr[i];
-    }
-    cin>>sum;
-    cout<<dpCalculate(arr, n, sum)<<endl;
+
+    node *root        = new node(1);
+    root->left        = new node(2);
+    root->right       = new node(3);
+    root->left->left  = new node(4);
+    root->left->right = new node(5);
+    root->left->left->right       = new node(3);
+    root->left->left->left         = new node(4);
+    cout<<getSizeOfTree(root);
     return 0;
+    
 }
+
+
