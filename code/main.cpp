@@ -26,28 +26,49 @@ struct node {
     }
 };
 
-int getSizeOfTree(node * root) {
-    if (root == NULL) {
-        return 0;
-    } else {
-        return 1 + getSizeOfTree(root->left) + getSizeOfTree(root->right);
+struct comb {
+    node* first;
+    int second;
+    comb(node * f, int s) {
+        this->first = f;
+        this->second = s;
+    }
+};
+
+void printLeftView(node *root){
+    map<int, int>hashMap;
+    queue<comb> q;
+    comb rootComb = comb(root, 0);
+    q.push(rootComb);
+    while(q.size()>0){
+        if(!hashMap[q.front().second]) {
+            hashMap[q.front().second] = 1;
+            cout<<q.front().first->val<<" ";
+        }
+        if (q.front().first->left != NULL) {
+            q.push(comb(q.front().first->left,  q.front().second + 1));
+        }
+        if (q.front().first->right != NULL) {
+            q.push(comb(q.front().first->right,  q.front().second + 1));
+        }
+        q.pop();
     }
 }
+
 
 int main(){
     freopen("/Users/mithoon.k/Documents/github-repo/ds-algo-code/code/code/input.txt","r",stdin);
     faster;
 
-    node *root        = new node(1);
-    root->left        = new node(2);
-    root->right       = new node(3);
-    root->left->left  = new node(4);
-    root->left->right = new node(5);
-    root->left->left->right       = new node(3);
-    root->left->left->left         = new node(4);
-    cout<<getSizeOfTree(root);
+    node *root        = new node(4);
+    root->left        = new node(5);
+    root->right       = new node(2);
+    root->right->left  = new node(3);
+    root->right->right = new node(1);
+    root->right->left->left  = new node(6);
+    root->right->left->right = new node(7);
+    printLeftView(root);
     return 0;
-    
 }
 
 
