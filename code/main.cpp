@@ -16,98 +16,66 @@ using namespace std;
 #define faster  ios_base::sync_with_stdio(false); cin.tie(NULL)
 
 struct node {
-    int val;
+    char val;
     node * left;
     node * right;
-    node(int val) {
+    node(char val) {
         this->val = val;
         this->left = NULL;
         this->right = NULL;
     }
 };
 
-struct comb {
-    node* first;
-    int second;
-    comb(node * f, int s) {
-        this->first = f;
-        this->second = s;
+int findPos(vector<char>inorder, char c) {
+    for (int i=0; i<inorder.size(); i++) {
+        if(inorder[i] == c ) {
+            return i;
+        }
     }
-};
-
-void printLeftBoundary(node *root){
-    if (root == NULL || (root->left == NULL && root->right == NULL) ) {
-        return;
-    } else if (root->left != NULL){
-        cout<<root->val<<" ";
-        printLeftBoundary(root->left);
-    } else {
-        cout<<root->val<<" ";
-        printLeftBoundary(root->right);
-    }
+    return -1;
 }
 
-void printRightBoundary(node *root){
-    if (root == NULL || (root->left == NULL && root->right == NULL) ) {
-        return;
-    } else if (root->right != NULL){
-        cout<<root->val<<" ";
-        printLeftBoundary(root->right);
-    } else {
-        cout<<root->val<<" ";
-        printLeftBoundary(root->left);
+node * constructBinaryTree(vector<char>inorder, vector<char>preorder, int &pos, node *root) {
+    int rootPos = findPos(inorder, preorder[pos]);
+    vector<char>leftInorder, rightInorder;
+    for(int i=0; i<inorder.size(); i++) {
+        if (i<rootPos) {
+            leftInorder.push_back(inorder[i]);
+        } else if (i>rootPos){
+            rightInorder.push_back(inorder[i]);
+        }
     }
-}
-
-void printAllLeafNodes(node *root){
-    if (root == NULL) {
-        return;
-    } else if (root->left == NULL && root->right == NULL){
-        cout<<root->val<<" ";
-        return;
+    root = new node(preorder[pos]);
+    pos++;
+    if (leftInorder.size()>0) {
+        root->left = constructBinaryTree(leftInorder, preorder, pos, root->left);
     }
-    if (root->left != NULL){
-        printAllLeafNodes(root->left);
+    if (rightInorder.size()>0) {
+       root->right = constructBinaryTree(rightInorder, preorder, pos, root->right);
     }
-    if (root->right != NULL){
-        printAllLeafNodes(root->right);
-    }
-}
-
-node * getDivergencePoint(node * root) {
-    if(root == NULL) {
-        return NULL;
-    } else if ((root->left != NULL && root->right != NULL) || (root->left == NULL && root->right == NULL) ){
-        cout<<root->val<<" ";
-        return root;
-    } else if (root->left != NULL) {
-        cout<<root->val<<" ";
-        return getDivergencePoint(root->left);
-    } else {
-        cout<<root->val<<" ";
-        return getDivergencePoint(root->right);
-    }
+    return root;
 }
 
 int main(){
     freopen("/Users/mithoon.k/Documents/github-repo/ds-algo-code/code/code/input.txt","r",stdin);
     faster;
-
-    node *root        = new node(20);
-    root->left        = new node(8);
-    root->right       = new node(22);
-    root->left->left  = new node(4);
-    root->left->right = new node(12);
-    root->left->right->left  = new node(10);
-    root->left->right->right = new node(14);
-    root->right->right = new node(25);
-    node * divergencePoint = getDivergencePoint(root);
-    cout<<endl;
-    printLeftBoundary(divergencePoint->left);
-    cout<<endl;
-    printRightBoundary(divergencePoint->right);
-    cout<<endl;
-    printAllLeafNodes(root);
+    vector<char> inorder, preorder;
+    inorder.push_back('d');
+    inorder.push_back('b');
+    inorder.push_back('e');
+    inorder.push_back('a');
+    inorder.push_back('f');
+    inorder.push_back('c');
+    
+    preorder.push_back('a');
+    preorder.push_back('b');
+    preorder.push_back('d');
+    preorder.push_back('e');
+    preorder.push_back('c');
+    preorder.push_back('f');
+    node *root = NULL;
+    int pos = 0;
+    root = constructBinaryTree(inorder, preorder, pos, root);
     return 0;
 }
 
