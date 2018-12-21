@@ -35,39 +35,79 @@ struct comb {
     }
 };
 
-void printLeftView(node *root){
-    map<int, int>hashMap;
-    queue<comb> q;
-    comb rootComb = comb(root, 0);
-    q.push(rootComb);
-    while(q.size()>0){
-        if(!hashMap[q.front().second]) {
-            hashMap[q.front().second] = 1;
-            cout<<q.front().first->val<<" ";
-        }
-        if (q.front().first->left != NULL) {
-            q.push(comb(q.front().first->left,  q.front().second + 1));
-        }
-        if (q.front().first->right != NULL) {
-            q.push(comb(q.front().first->right,  q.front().second + 1));
-        }
-        q.pop();
+void printLeftBoundary(node *root){
+    if (root == NULL || (root->left == NULL && root->right == NULL) ) {
+        return;
+    } else if (root->left != NULL){
+        cout<<root->val<<" ";
+        printLeftBoundary(root->left);
+    } else {
+        cout<<root->val<<" ";
+        printLeftBoundary(root->right);
     }
 }
 
+void printRightBoundary(node *root){
+    if (root == NULL || (root->left == NULL && root->right == NULL) ) {
+        return;
+    } else if (root->right != NULL){
+        cout<<root->val<<" ";
+        printLeftBoundary(root->right);
+    } else {
+        cout<<root->val<<" ";
+        printLeftBoundary(root->left);
+    }
+}
+
+void printAllLeafNodes(node *root){
+    if (root == NULL) {
+        return;
+    } else if (root->left == NULL && root->right == NULL){
+        cout<<root->val<<" ";
+        return;
+    }
+    if (root->left != NULL){
+        printAllLeafNodes(root->left);
+    }
+    if (root->right != NULL){
+        printAllLeafNodes(root->right);
+    }
+}
+
+node * getDivergencePoint(node * root) {
+    if(root == NULL) {
+        return NULL;
+    } else if ((root->left != NULL && root->right != NULL) || (root->left == NULL && root->right == NULL) ){
+        cout<<root->val<<" ";
+        return root;
+    } else if (root->left != NULL) {
+        cout<<root->val<<" ";
+        return getDivergencePoint(root->left);
+    } else {
+        cout<<root->val<<" ";
+        return getDivergencePoint(root->right);
+    }
+}
 
 int main(){
     freopen("/Users/mithoon.k/Documents/github-repo/ds-algo-code/code/code/input.txt","r",stdin);
     faster;
 
-    node *root        = new node(4);
-    root->left        = new node(5);
-    root->right       = new node(2);
-    root->right->left  = new node(3);
-    root->right->right = new node(1);
-    root->right->left->left  = new node(6);
-    root->right->left->right = new node(7);
-    printLeftView(root);
+    node *root        = new node(20);
+    root->left        = new node(8);
+    root->right       = new node(22);
+    root->left->left  = new node(4);
+    root->left->right = new node(12);
+    root->left->right->left  = new node(10);
+    root->left->right->right = new node(14);
+    root->right->right = new node(25);
+    node * divergencePoint = getDivergencePoint(root);
+    cout<<endl;
+    printLeftBoundary(divergencePoint->left);
+    cout<<endl;
+    printRightBoundary(divergencePoint->right);
+    cout<<endl;
+    printAllLeafNodes(root);
     return 0;
 }
 
