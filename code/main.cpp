@@ -37,6 +37,16 @@ void breadthFirstSearch(int node, int n, vector<int> adj[]) {
     
 }
 
+void depthFirstSearch(int node, int visited[], vector<int>adj[]){
+    visited[node] = 1;
+    cout<<node<<" ";
+    for(int i=0; i<adj[node].size(); i++) {
+        if (!visited[adj[node][i]]) {
+            depthFirstSearch(adj[node][i], visited, adj);
+        }
+    }
+}
+
 int main(){
     freopen("/Users/mithoon.k/Documents/github-repo/ds-algo-code/code/code/input.txt","r",stdin);
     faster;
@@ -50,7 +60,12 @@ int main(){
         //adj[b].push_back(a);
     }
     
-    breadthFirstSearch(0, n, adj);
+    //breadthFirstSearch(0, n, adj);
+    int visited[n];
+    for (int i=0; i<n; i++) {
+        visited[i] = 0;
+    }
+    depthFirstSearch(0, visited, adj);
     return 0;
 }
 
