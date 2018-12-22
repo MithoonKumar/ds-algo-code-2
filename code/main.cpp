@@ -14,68 +14,79 @@
 #include<stdio.h>
 using namespace std;
 #define faster  ios_base::sync_with_stdio(false); cin.tie(NULL)
+void heapifyMin(int index);
+int heapArr[1000];
+int heapSize = 0;
 
-struct node {
-    char val;
-    node * left;
-    node * right;
-    node(char val) {
-        this->val = val;
-        this->left = NULL;
-        this->right = NULL;
-    }
-};
-
-int findPos(vector<char>inorder, char c) {
-    for (int i=0; i<inorder.size(); i++) {
-        if(inorder[i] == c ) {
-            return i;
-        }
-    }
-    return -1;
+int parent(int i){
+    return (i-1)/2;
 }
 
-node * constructBinaryTree(vector<char>inorder, vector<char>preorder, int &pos, node *root) {
-    int rootPos = findPos(inorder, preorder[pos]);
-    vector<char>leftInorder, rightInorder;
-    for(int i=0; i<inorder.size(); i++) {
-        if (i<rootPos) {
-            leftInorder.push_back(inorder[i]);
-        } else if (i>rootPos){
-            rightInorder.push_back(inorder[i]);
-        }
+int leftChild(int i) {
+    return 2*i+1;
+}
+
+int rightChild(int i) {
+    return 2*i+2;
+}
+
+void swap(int pos1, int pos2) {
+    int temp = heapArr[pos1];
+    heapArr[pos1] = heapArr[pos2];
+    heapArr[pos2] = temp;
+}
+
+void insertInMinHeap(int num){
+    heapArr[heapSize] = num;
+    heapSize++;
+    int pos = heapSize-1;
+    while (pos!=0 && heapArr[parent(pos)] > heapArr[pos]) {
+        swap(parent(pos), pos);
     }
-    root = new node(preorder[pos]);
-    pos++;
-    if (leftInorder.size()>0) {
-        root->left = constructBinaryTree(leftInorder, preorder, pos, root->left);
+}
+
+void deleteMin() {
+    if (heapSize == 0) {
+        return;
     }
-    if (rightInorder.size()>0) {
-       root->right = constructBinaryTree(rightInorder, preorder, pos, root->right);
+    int root = heapArr[heapSize-1];
+    heapArr[0] = root;
+    heapSize--;
+    heapifyMin(0);
+}
+
+void heapifyMin(int index) {
+    int val = heapArr[index];
+    int leftChildVal = leftChild(index)<heapSize-1 ? heapArr[leftChild(index)] : INT_MAX;
+    int rightChildVal = rightChild(index)<heapSize-1 ? heapArr[rightChild(index)] :INT_MAX;
+    int min = (val < leftChildVal ? val : leftChildVal) < rightChildVal ? (val < leftChildVal ? val : leftChildVal) : rightChildVal;
+    if (val == min) {
+        return;
+    } else if (min == leftChildVal) {
+        swap(index, leftChild(index));
+        heapifyMin(leftChild(index));
+    } else {
+        swap(index, rightChild(index));
+        heapifyMin(rightChild(index));
     }
-    return root;
 }
 
 int main(){
     freopen("/Users/mithoon.k/Documents/github-repo/ds-algo-code/code/code/input.txt","r",stdin);
     faster;
-    vector<char> inorder, preorder;
-    inorder.push_back('d');
-    inorder.push_back('b');
-    inorder.push_back('e');
-    inorder.push_back('a');
-    inorder.push_back('f');
-    inorder.push_back('c');
+    int n;
+    cin>>n;
+    for (int i=0; i<n; i++) {
+        int temp;
+        cin>>temp;
+        insertInMinHeap(temp);
+    }
+    deleteMin();
     
-    preorder.push_back('a');
-    preorder.push_back('b');
-    preorder.push_back('d');
-    preorder.push_back('e');
-    preorder.push_back('c');
-    preorder.push_back('f');
-    node *root = NULL;
-    int pos = 0;
-    root = constructBinaryTree(inorder, preorder, pos, root);
+    for(int i=0; i<heapSize; i++) {
+        cout<<heapArr[i] <<" ";
+    }
+    
     return 0;
 }
 
