@@ -14,37 +14,22 @@
 #include<stdio.h>
 using namespace std;
 #define faster  ios_base::sync_with_stdio(false); cin.tie(NULL)
+vector<vector<int> > listOfCycles;
 
-void breadthFirstSearch(int node, int n, vector<int> adj[]) {
-    int visited[n];
-    for(int i=0; i<n; i++) {
-        visited[i] = 0;
-    }
-    queue<int>q;
-    q.push(node);
+void dfs(int parent, int node, int visited[], vector<int>adj[], vector<int>stack) {
+    stack.push_back(node);
     visited[node] = 1;
-    while(q.size()>0) {
-        int topNode = q.front();
-        cout<<topNode<<" ";
-        q.pop();
-        for(int i=0; i<adj[topNode].size(); i++) {
-            if (visited[adj[topNode][i]] == 0) {
-                q.push(adj[topNode][i]);
-                visited[adj[topNode][i]] = 1;
+    for(int i=0; i<adj[node].size(); i++) {
+        if (parent != adj[node][i]) {
+            if (visited[adj[node][i]] == 0) {
+                dfs(node, adj[node][i], visited, adj, stack);
+            } else if(visited[adj[node][i]] == 1){
+                listOfCycles.push_back(stack);
             }
         }
     }
-    
-}
-
-void depthFirstSearch(int node, int visited[], vector<int>adj[]){
-    visited[node] = 1;
-    cout<<node<<" ";
-    for(int i=0; i<adj[node].size(); i++) {
-        if (!visited[adj[node][i]]) {
-            depthFirstSearch(adj[node][i], visited, adj);
-        }
-    }
+    visited[node] = 2;
+    stack.pop_back();
 }
 
 int main(){
@@ -52,20 +37,25 @@ int main(){
     faster;
     int n, e;
     cin>>n>>e;
-    vector<int> adj[n];
+    vector<int>adj[n+1];
     for (int i=0; i<e; i++) {
         int a, b;
         cin>>a>>b;
         adj[a].push_back(b);
-        //adj[b].push_back(a);
+        adj[b].push_back(a);
     }
-    
-    //breadthFirstSearch(0, n, adj);
-    int visited[n];
-    for (int i=0; i<n; i++) {
+    int visited[n+1];
+    for (int i=0; i<=n; i++) {
         visited[i] = 0;
     }
-    depthFirstSearch(0, visited, adj);
+    vector<int>stack;
+    dfs(0, 1, visited, adj, stack);
+    for(int i=0; i<listOfCycles.size(); i++) {
+        for(int j=0; j<listOfCycles[i].size(); j++){
+            cout<<listOfCycles[i][j]<<" ";
+        }
+        cout<<endl;
+    }
     return 0;
 }
 
