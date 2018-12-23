@@ -66,7 +66,7 @@ int main(){
     trieNode * root = new trieNode();
     for (int i=0; i<n; i++) {
         cin>>strings[i];
-        insert(strings[i],0, root);t
+        insert(strings[i],0, root);
     }
     
     searchT("the",0, root)? cout<<"found"<<endl :cout<< "not found"<<endl;
