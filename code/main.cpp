@@ -15,45 +15,27 @@
 using namespace std;
 #define faster  ios_base::sync_with_stdio(false); cin.tie(NULL)
 
-struct trieNode {
-    bool isEndOfWord;
-    trieNode * chidlren[26];
-    trieNode() {
-        this->isEndOfWord = false;
-        for (int i=0; i<26; i++) {
-            this->chidlren[i] = NULL;
-        }
-    }
-};
+int matrix[100][100];
 
-
-
-
-void insert(string str, int pos, trieNode * root) {
-    if (root->chidlren[str[pos]-'a'] == NULL) {
-        root->chidlren[str[pos]-'a'] = new trieNode();
-    }
-    if (pos+1 == str.length()) {
-        root->chidlren[str[pos]-'a']->isEndOfWord = true;
-    } else {
-        insert(str, pos+1, root->chidlren[str[pos]-'a']);
-    }
-}
-
-bool searchT(string str, int pos, trieNode * root) {
-    if (!root->chidlren[str[pos]-'a']) {
-        return false;
-    } else {
-        if (pos+1 == str.length()) {
-            if (root->chidlren[str[pos]-'a']->isEndOfWord) {
-                return true;
-            } else {
-                return false;
-            }
+bool hasHamiltonianCycle(int node, int visited[], int len, int count) {
+    if (count == len-1 && matrix[node][0]) {
+        if (matrix[node][0]) {
+            return true;
         } else {
-            return searchT(str, pos+1, root->chidlren[str[pos]-'a']);
+            return false;
         }
     }
+    visited[node] = 1;
+    for (int i=0; i<len; i++) {
+        if (matrix[node][i] && !visited[i]) {
+            bool temp = hasHamiltonianCycle(i, visited, len, count+1);
+            if (temp) {
+                return true;
+            }
+        }
+    }
+    return false;
+    
 }
 
 
@@ -62,18 +44,16 @@ int main(){
     faster;
     int n;
     cin>>n;
-    string strings[n];
-    trieNode * root = new trieNode();
     for (int i=0; i<n; i++) {
-        cin>>strings[i];
-        insert(strings[i],0, root);
+        for (int j=0; j<n; j++) {
+            cin>>matrix[i][j];
+        }
     }
-    
-    searchT("the",0, root)? cout<<"found"<<endl :cout<< "not found"<<endl;
-    searchT("these",0, root)? cout<<"found"<<endl :cout<< "not found"<<endl;
-    searchT("their", 0, root)?cout<< "found"<<endl :cout<< "not found"<<endl;
-    searchT("thaw", 0, root)?cout<< "found"<<endl :cout<< "not found"<<endl;
-    
+    int visited[n];
+    for (int i=0; i<n; i++) {
+        visited[i] = 0;
+    }
+    cout<<hasHamiltonianCycle(0, visited, n, 0);
     return 0;
 }
 
