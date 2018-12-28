@@ -17,38 +17,30 @@ using namespace std;
 
 int matrix[100][100];
 
+bool check(int pos1, string firstString, int pos2, string secondString, int pos3, string finalString) {
+    if(pos3 == finalString.length()) {
+        return true;
+    }
+    bool first = false, second = false;
+    if (pos1<firstString.length() && firstString[pos1] == finalString[pos3]) {
+        first = check(pos1+1, firstString, pos2, secondString, pos3+1, finalString);
+    }
+    if (pos2<secondString.length() && secondString[pos2] == finalString[pos3]) {
+        second = check(pos1, firstString, pos2+1, secondString, pos3+1, finalString);
+    }
+    return first || second;
+}
 
 int main(){
     freopen("/Users/mithoon.k/Documents/github-repo/ds-algo-code/code/code/input.txt","r",stdin);
     faster;
-    int m, n;
-    cin>>m>>n;
-    for (int i=0; i<m; i++) {
-        for (int j=0; j<n; j++) {
-            cin>>matrix[i][j];
-        }
+    string firstString, secondString, finalString;
+    int n;
+    cin>>n;
+    for(int i=0; i<n; i++) {
+        cin>>firstString>>secondString>>finalString;
+        check(0, firstString, 0, secondString, 0, finalString)? cout<<"yes"<<endl : cout<<"no"<<endl;
     }
-    
-    int dpMatrix[m][n];
-    
-    for(int j=0; j<n; j++) {
-        for (int i=0; i<m; i++) {
-            if (i == 0 && j ==0) {
-                dpMatrix[0][0] = matrix[0][0];
-                continue;
-            }
-            int minVal = INT_MAX;
-            int leftVal = (j-1>=0) ? dpMatrix[i][j-1] : INT_MAX;
-            int topVal = (i-1>=0) ? dpMatrix[i-1][j] : INT_MAX;
-            int topLeftVal = (i-1>=0 && j-1>=0) ? dpMatrix[i-1][j-1] : INT_MAX;
-            minVal = minVal<leftVal ? minVal :leftVal;
-            minVal = minVal<topVal ? minVal : topVal;
-            minVal = minVal<topLeftVal ? minVal : topLeftVal;
-            dpMatrix[i][j] = minVal + matrix[i][j];
-        }
-    }
-    
-    cout<<dpMatrix[m-1][n-1]<<endl;
     return 0;
 }
 
