@@ -25,41 +25,34 @@ struct node {
     }
 };
 
-bool isBST(node * root, int lowerBound, int upperBound) {
+void modifyBst(node * root, int &sum) {
     if (root == NULL) {
-        return false;
-    }
-    bool leftCondition = true, rightCondition = true;
-    if (root->left) {
-        if (root->left->num >lowerBound && root->left->num <root->num) {
-            leftCondition = isBST(root->left, lowerBound, root->num);
-        } else {
-            leftCondition = false;
-        }
+        return;
     }
     if (root->right) {
-        if (root->right->num >root->num && root->right->num <upperBound) {
-            rightCondition = isBST(root->right, root->num, upperBound);
-        } else {
-            rightCondition = false;
-        }
+        modifyBst(root->right, sum);
     }
-    return leftCondition && rightCondition;
+    int tempSum = sum;
+    sum  = sum + root->num;
+    root->num = root->num + tempSum;
+    if (root->left) {
+        modifyBst(root->left, sum);
+    }
 }
+
 
 int main(){
     freopen("/Users/mithoon.k/Documents/github-repo/ds-algo-code/code/code/input.txt","r",stdin);
     faster;
-    node *root = new node(1);
-    root->left = new node(1);
-    
-    if (isBST(root, INT_MIN, INT_MAX)) {
-        cout << "Is BST"<<endl;
-    }
-    else {
-        cout << "Not a BST"<<endl;
-    }
-    
+    node * root = new node(50);
+    root->left = new node(30);
+    root->right = new node(70);
+    root->left->left = new node(20);
+    root->left->right = new node(40);
+    root->right->left = new node(60);
+    root->right->right = new node(80);
+    int sum = 0;
+    modifyBst(root, sum);
     return 0;
 }
 
