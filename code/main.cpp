@@ -15,32 +15,29 @@
 using namespace std;
 #define faster  ios_base::sync_with_stdio(false); cin.tie(NULL)
 
-int matrix[100][100];
-
-bool check(int pos1, string firstString, int pos2, string secondString, int pos3, string finalString) {
-    if(pos3 == finalString.length()) {
-        return true;
+void printAllPrimeFactors(int num) {
+    while((num%2) == 0) {
+        cout<<2<<endl;
+        num/=2;
     }
-    bool first = false, second = false;
-    if (pos1<firstString.length() && firstString[pos1] == finalString[pos3]) {
-        first = check(pos1+1, firstString, pos2, secondString, pos3+1, finalString);
+    
+    for (int i=3;i<=sqrt(num); i++) {
+        while ((num%i) == 0) {
+            cout<<i<<endl;
+            num/=i;
+        }
     }
-    if (pos2<secondString.length() && secondString[pos2] == finalString[pos3]) {
-        second = check(pos1, firstString, pos2+1, secondString, pos3+1, finalString);
+    if (num>1) {
+        cout<<num<<endl;
     }
-    return first || second;
 }
 
 int main(){
     freopen("/Users/mithoon.k/Documents/github-repo/ds-algo-code/code/code/input.txt","r",stdin);
     faster;
-    string firstString, secondString, finalString;
     int n;
     cin>>n;
-    for(int i=0; i<n; i++) {
-        cin>>firstString>>secondString>>finalString;
-        check(0, firstString, 0, secondString, 0, finalString)? cout<<"yes"<<endl : cout<<"no"<<endl;
-    }
+    printAllPrimeFactors(n);
     return 0;
 }
 
