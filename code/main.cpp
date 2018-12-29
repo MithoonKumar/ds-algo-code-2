@@ -15,31 +15,51 @@
 using namespace std;
 #define faster  ios_base::sync_with_stdio(false); cin.tie(NULL)
 
-void printAllPrimeFactors(int num) {
-    while((num%2) == 0) {
-        cout<<2<<endl;
-        num/=2;
+struct node {
+    int num;
+    node * left, * right;
+    node(int number){
+        num = number;
+        left = NULL;
+        right = NULL;
     }
-    
-    for (int i=3;i<=sqrt(num); i++) {
-        while ((num%i) == 0) {
-            cout<<i<<endl;
-            num/=i;
+};
+
+bool isBST(node * root, int lowerBound, int upperBound) {
+    if (root == NULL) {
+        return false;
+    }
+    bool leftCondition = true, rightCondition = true;
+    if (root->left) {
+        if (root->left->num >lowerBound && root->left->num <root->num) {
+            leftCondition = isBST(root->left, lowerBound, root->num);
+        } else {
+            leftCondition = false;
         }
     }
-    if (num>1) {
-        cout<<num<<endl;
+    if (root->right) {
+        if (root->right->num >root->num && root->right->num <upperBound) {
+            rightCondition = isBST(root->right, root->num, upperBound);
+        } else {
+            rightCondition = false;
+        }
     }
+    return leftCondition && rightCondition;
 }
 
 int main(){
     freopen("/Users/mithoon.k/Documents/github-repo/ds-algo-code/code/code/input.txt","r",stdin);
     faster;
-    int n;
-    cin>>n;
-    printAllPrimeFactors(n);
+    node *root = new node(1);
+    root->left = new node(1);
+    
+    if (isBST(root, INT_MIN, INT_MAX)) {
+        cout << "Is BST"<<endl;
+    }
+    else {
+        cout << "Not a BST"<<endl;
+    }
+    
     return 0;
 }
-
-
 
