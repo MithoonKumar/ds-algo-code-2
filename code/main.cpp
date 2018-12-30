@@ -15,52 +15,47 @@
 using namespace std;
 #define faster  ios_base::sync_with_stdio(false); cin.tie(NULL)
 
-struct point {
-    double x, y;
-    point(double x, double y){
-        this->x = x ;
-        this->y = y;
-    }
-    point() {}
-};
-
-double findDistance(point first, point second) {
-    return sqrt((first.x - second.x)*(first.x - second.x) + (first.y - second.y)*(first.y - second.y));
-}
-
 int main(){
     freopen("/Users/mithoon.k/Documents/github-repo/ds-algo-code/code/code/input.txt","r",stdin);
     faster;
-    point p1 = point();
-    point p2 = point();
-    point p3 = point();
-    point p4 = point();
-    //pick first point and then start processing
-    double d2, d3, d4;
-    d2 = findDistance(p1, p2);
-    d3 = findDistance(p1, p3);
-    d4 = findDistance(p1, p4);
-    bool answer = false;
-    if (d2 == d3  && d2*d2 == 2*d4*d4) {
-        if(findDistance(p4, p2) == findDistance(p4, p3) && findDistance(p4, p2) == d2) {
-            answer = true;
-        } else {
-            answer = false;
+    long long t;
+    cin>>t;
+    while(t--) {
+        long long n;
+        cin>>n;
+        long long monthDays [n];
+        long long cumMonthDays [n];
+        long long sumOfDays = 0;
+        for (long long i=0; i<n; i++) {
+            cin>>monthDays[i];
+            if (i == 0) {
+                cumMonthDays[0] = monthDays[i];
+            } else {
+                cumMonthDays[i] = cumMonthDays[i-1] + monthDays[i];
+            }
+            sumOfDays += monthDays[i];
         }
-    } else if (d2 == d4  && d2*d2 == 2*d3*d3){
-        if(findDistance(p3, p2) == findDistance(p3, p4) && findDistance(p3, p4) == d2) {
-            answer = true;
-        } else {
-            answer = false;
+        long long yb, mb, db, yc, mc, dc;
+        cin>>yb>>mb>>db>>yc>>mc>>dc;
+        long long numberOfLeapYears = 0, numberOfNonLeapYears = 0;
+        if (yc-yb>1) {
+            long long lowerBound = yb + 1;
+            long long upperBound = yc -1;
+            numberOfLeapYears = upperBound/4 - lowerBound/4 + ((lowerBound%4) == 0 ? 1 : 0);
+            numberOfNonLeapYears = yc-yb-1 - numberOfLeapYears;
         }
-    } else if (d4 == d3  && d3*d3 == 2*d2*d2) {
-        if(findDistance(p4, p2) == findDistance(p3, p2) && findDistance(p4, p2) == d4) {
-            answer = true;
+        long long age = 0;
+        age = age + sumOfDays*numberOfNonLeapYears;
+        age = age + (sumOfDays+1)*numberOfLeapYears;
+        if (yc-yb >=1) {
+            long long numberOfDaysInBirthYear = (((yb%4) == 0) ? sumOfDays+1: sumOfDays) - (mb-2>=0 ? cumMonthDays[mb-2]: 0) - db + 1;
+            long long numberOfDaysInCurrentYear = (mc-2>=0 ? cumMonthDays[mc-2]: 0) + dc;
+            age = age + numberOfDaysInBirthYear + numberOfDaysInCurrentYear;
         } else {
-            answer = false;
+            age = age + (mc-2>=0 ? cumMonthDays[mc-2]: 0) + dc - (mb-2>=0 ? cumMonthDays[mb-2]: 0) - db + 1;
         }
+        cout<<age<<endl;
     }
-    cout<<answer<<endl;
     return 0;
 }
 
