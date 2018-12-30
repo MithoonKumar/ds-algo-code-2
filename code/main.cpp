@@ -15,44 +15,52 @@
 using namespace std;
 #define faster  ios_base::sync_with_stdio(false); cin.tie(NULL)
 
-struct node {
-    int num;
-    node * left, * right;
-    node(int number){
-        num = number;
-        left = NULL;
-        right = NULL;
+struct point {
+    double x, y;
+    point(double x, double y){
+        this->x = x ;
+        this->y = y;
     }
+    point() {}
 };
 
-void modifyBst(node * root, int &sum) {
-    if (root == NULL) {
-        return;
-    }
-    if (root->right) {
-        modifyBst(root->right, sum);
-    }
-    int tempSum = sum;
-    sum  = sum + root->num;
-    root->num = root->num + tempSum;
-    if (root->left) {
-        modifyBst(root->left, sum);
-    }
+double findDistance(point first, point second) {
+    return sqrt((first.x - second.x)*(first.x - second.x) + (first.y - second.y)*(first.y - second.y));
 }
-
 
 int main(){
     freopen("/Users/mithoon.k/Documents/github-repo/ds-algo-code/code/code/input.txt","r",stdin);
     faster;
-    node * root = new node(50);
-    root->left = new node(30);
-    root->right = new node(70);
-    root->left->left = new node(20);
-    root->left->right = new node(40);
-    root->right->left = new node(60);
-    root->right->right = new node(80);
-    int sum = 0;
-    modifyBst(root, sum);
+    point p1 = point();
+    point p2 = point();
+    point p3 = point();
+    point p4 = point();
+    //pick first point and then start processing
+    double d2, d3, d4;
+    d2 = findDistance(p1, p2);
+    d3 = findDistance(p1, p3);
+    d4 = findDistance(p1, p4);
+    bool answer = false;
+    if (d2 == d3  && d2*d2 == 2*d4*d4) {
+        if(findDistance(p4, p2) == findDistance(p4, p3) && findDistance(p4, p2) == d2) {
+            answer = true;
+        } else {
+            answer = false;
+        }
+    } else if (d2 == d4  && d2*d2 == 2*d3*d3){
+        if(findDistance(p3, p2) == findDistance(p3, p4) && findDistance(p3, p4) == d2) {
+            answer = true;
+        } else {
+            answer = false;
+        }
+    } else if (d4 == d3  && d3*d3 == 2*d2*d2) {
+        if(findDistance(p4, p2) == findDistance(p3, p2) && findDistance(p4, p2) == d4) {
+            answer = true;
+        } else {
+            answer = false;
+        }
+    }
+    cout<<answer<<endl;
     return 0;
 }
 
