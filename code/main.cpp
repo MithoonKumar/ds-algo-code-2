@@ -18,43 +18,38 @@ using namespace std;
 int main(){
     freopen("/Users/mithoon.k/Documents/github-repo/ds-algo-code/code/code/input.txt","r",stdin);
     faster;
-    long long t;
-    cin>>t;
-    while(t--) {
-        long long n;
-        cin>>n;
-        long long monthDays [n];
-        long long cumMonthDays [n];
-        long long sumOfDays = 0;
-        for (long long i=0; i<n; i++) {
-            cin>>monthDays[i];
-            if (i == 0) {
-                cumMonthDays[0] = monthDays[i];
-            } else {
-                cumMonthDays[i] = cumMonthDays[i-1] + monthDays[i];
+    int n, k;
+    cin>>n>>k;
+    int matrix[k+1][n+1];
+    for (int j=1; j<=n; j++) {
+        for (int i=1; i<=k; i++) {
+            cin>>matrix[i][j];
+        }
+    }
+    map<int, int>hashMap;
+    for(int i=1; i<=k; i++) {
+        for (int j = 1; j<=n-1; j++) {
+            if (matrix[i][j]) {
+                hashMap[k] = 1;
             }
-            sumOfDays += monthDays[i];
         }
-        long long yb, mb, db, yc, mc, dc;
-        cin>>yb>>mb>>db>>yc>>mc>>dc;
-        long long numberOfLeapYears = 0, numberOfNonLeapYears = 0;
-        if (yc-yb>1) {
-            long long lowerBound = yb + 1;
-            long long upperBound = yc -1;
-            numberOfLeapYears = upperBound/4 - lowerBound/4 + ((lowerBound%4) == 0 ? 1 : 0);
-            numberOfNonLeapYears = yc-yb-1 - numberOfLeapYears;
-        }
-        long long age = 0;
-        age = age + sumOfDays*numberOfNonLeapYears;
-        age = age + (sumOfDays+1)*numberOfLeapYears;
-        if (yc-yb >=1) {
-            long long numberOfDaysInBirthYear = (((yb%4) == 0) ? sumOfDays+1: sumOfDays) - (mb-2>=0 ? cumMonthDays[mb-2]: 0) - db + 1;
-            long long numberOfDaysInCurrentYear = (mc-2>=0 ? cumMonthDays[mc-2]: 0) + dc;
-            age = age + numberOfDaysInBirthYear + numberOfDaysInCurrentYear;
+    }
+    vector<double>answer;
+    int totalCount = 1;
+    for (int i=1; i<=k; i++) {
+        totalCount+= matrix[i][n];
+    }
+    for (int i=1; i<=k; i++) {
+        if (hashMap[i]) {
+            double ans = ((double)(1+matrix[i][n]))/((double)totalCount);
+            answer.push_back(ans);
         } else {
-            age = age + (mc-2>=0 ? cumMonthDays[mc-2]: 0) + dc - (mb-2>=0 ? cumMonthDays[mb-2]: 0) - db + 1;
+            double ans = ((double)(matrix[i][n]))/((double)totalCount);
+            answer.push_back(ans);
         }
-        cout<<age<<endl;
+    }
+    for (int i=0; i<k; i++) {
+        cout<<answer[i] <<endl;
     }
     return 0;
 }
