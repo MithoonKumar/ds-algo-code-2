@@ -15,42 +15,28 @@
 using namespace std;
 #define faster  ios_base::sync_with_stdio(false); cin.tie(NULL)
 
+void printAllPermutations(string str, string pStr, bool visited[], int tempLength, int length) {
+    if(tempLength == length) {
+        cout<<pStr<<endl;
+        return;
+    }
+    for(int i=0; i<str.length(); i++) {
+        if(!visited[i]) {
+            pStr.push_back(str[i]);
+            visited[i] = true;
+            printAllPermutations(str, pStr, visited , tempLength+1, length);
+            pStr.pop_back();
+            visited[i] = false;
+        }
+    }
+}
+
 int main(){
     freopen("/Users/mithoon.k/Documents/github-repo/ds-algo-code/code/code/input.txt","r",stdin);
     faster;
-    int n, k;
-    cin>>n>>k;
-    int matrix[k+1][n+1];
-    for (int j=1; j<=n; j++) {
-        for (int i=1; i<=k; i++) {
-            cin>>matrix[i][j];
-        }
-    }
-    map<int, int>hashMap;
-    for(int i=1; i<=k; i++) {
-        for (int j = 1; j<=n-1; j++) {
-            if (matrix[i][j]) {
-                hashMap[k] = 1;
-            }
-        }
-    }
-    vector<double>answer;
-    int totalCount = 1;
-    for (int i=1; i<=k; i++) {
-        totalCount+= matrix[i][n];
-    }
-    for (int i=1; i<=k; i++) {
-        if (hashMap[i]) {
-            double ans = ((double)(1+matrix[i][n]))/((double)totalCount);
-            answer.push_back(ans);
-        } else {
-            double ans = ((double)(matrix[i][n]))/((double)totalCount);
-            answer.push_back(ans);
-        }
-    }
-    for (int i=0; i<k; i++) {
-        cout<<answer[i] <<endl;
-    }
+    string str = "abc", permutedString="";
+    bool visited[3] = {};
+    printAllPermutations(str, permutedString, visited, 0, 3);
     return 0;
 }
 
