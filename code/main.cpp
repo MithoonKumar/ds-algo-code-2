@@ -14,70 +14,53 @@
 #include<stdio.h>
 using namespace std;
 #define faster  ios_base::sync_with_stdio(false); cin.tie(NULL)
+int matrix[100][100];
 
-struct point {
-    int ele, dis;
-    point(int ele, int dis) {
-        this->ele = ele;
-        this->dis = dis;
-    }
-};
-
-int getMinDiceThrows(int moves[], int N) {
-    bool visited[N];
-    for(int i=0; i<N; i++) {
-        visited[i] = false;
-    }
-    queue<point>q;
-    int startingCoordinate = (moves[0] == -1 ? 0 : moves[0]);
-    point starting = point(startingCoordinate, 0);
-    q.push(starting);
-    visited[0] = true;
-    int answer = -1;
-    while(!q.empty()) {
-        point topElement = q.front();
-        q.pop();
-        for (int i= topElement.ele+1; i<=topElement.ele+6; i++) {
-            if (i>=N) {
-                continue;
-            }
-            int nextPoint = (moves[i] == -1 ? i : moves[i]);
-            if (!visited[nextPoint]) {
-                point tempPoint = point(nextPoint, topElement.dis+1);
-                q.push(tempPoint);
-                visited[nextPoint] = true;
-                if (tempPoint.ele == N-1) {
-                    answer = tempPoint.dis;
-                    break;
-                }
-            }
-        }
-    }
-    return answer;
+pair<int, int> getCoordinates(int index, int m) {
+    int r = index/m;
+    int c = (index%m);
+    pair<int, int>p;
+    p.first = r;
+    p.second = c;
+    return p;
 }
 
+bool binarySearch(int num, int s, int e, int m) {
+    if(s>e) {
+        return false;
+    }
+    int mid =(s+e)/2;
+    pair<int, int> midP = getCoordinates(mid, m);
+    int midNum = matrix[midP.first][midP.second];
+    if (midNum == num) {
+        return true;
+    } else if (midNum>num) {
+        return binarySearch(num, s, mid-1, m);
+    } else {
+        return binarySearch(num, mid+1, e, m);
+    }
+}
 
 int main(){
     freopen("/Users/mithoon.k/Documents/github-repo/ds-algo-code/code/code/input.txt","r",stdin);
     faster;
-    int N = 30;
-    int moves[N];
-    for (int i = 0; i<N; i++)
-        moves[i] = -1;
+    int m;
+    cin>>m;
+    for(int i=0; i<m; i++) {
+        for(int j=0; j<m; j++) {
+            cin>>matrix[i][j];
+        }
+    }
+    for(int i=0; i<3; i++) {
+        int num;
+        cin>>num;
+        if (num == -1) {
+            break;
+        }
+        cout<<binarySearch(num, 0, m*m-1, m)<<endl;
+    }
     
-    // Ladders
-    moves[2] = 21;
-    moves[4] = 7;
-    moves[10] = 25;
-    moves[19] = 28;
     
-    // Snakes
-    moves[26] = 0;
-    moves[20] = 8;
-    moves[16] = 3;
-    moves[18] = 6;
-    
-    cout << "Min Dice throws required is " << getMinDiceThrows(moves, N);
     return 0;
 }
 
