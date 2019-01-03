@@ -14,53 +14,46 @@
 #include<stdio.h>
 using namespace std;
 #define faster  ios_base::sync_with_stdio(false); cin.tie(NULL)
-int matrix[100][100];
 
-pair<int, int> getCoordinates(int index, int m) {
-    int r = index/m;
-    int c = (index%m);
-    pair<int, int>p;
-    p.first = r;
-    p.second = c;
-    return p;
-}
-
-bool binarySearch(int num, int s, int e, int m) {
-    if(s>e) {
-        return false;
-    }
-    int mid =(s+e)/2;
-    pair<int, int> midP = getCoordinates(mid, m);
-    int midNum = matrix[midP.first][midP.second];
-    if (midNum == num) {
-        return true;
-    } else if (midNum>num) {
-        return binarySearch(num, s, mid-1, m);
-    } else {
-        return binarySearch(num, mid+1, e, m);
-    }
+bool compareFunc(string str1, string str2) {
+    return str1.length()<str2.length();
 }
 
 int main(){
     freopen("/Users/mithoon.k/Documents/github-repo/ds-algo-code/code/code/input.txt","r",stdin);
     faster;
-    int m;
-    cin>>m;
-    for(int i=0; i<m; i++) {
-        for(int j=0; j<m; j++) {
-            cin>>matrix[i][j];
+    int n;
+    cin>>n;
+    vector<string>vecString;
+    for(int i=0; i<n; i++) {
+        string str;
+        cin>>str;
+        vecString.push_back(str);
+    }
+    map<string, int>hashMap;
+    for(int i=0; i<n; i++) {
+        hashMap[vecString[i]] = 0;
+    }
+    sort(vecString.begin(), vecString.end(), compareFunc);
+    
+    for(int i=0; i<vecString.size(); i++) {
+        string iStr = vecString[i];
+        for(int j=0; j<iStr.length(); j++) {
+            iStr.erase(j, 1);
+            if (hashMap.find(iStr) != hashMap.end() && hashMap[iStr] + 1 > hashMap[vecString[i]]) {
+                hashMap[vecString[i]] = hashMap[iStr] + 1;
+            }
+            iStr = vecString[i];
         }
     }
-    for(int i=0; i<3; i++) {
-        int num;
-        cin>>num;
-        if (num == -1) {
-            break;
-        }
-        cout<<binarySearch(num, 0, m*m-1, m)<<endl;
+    
+    int answer = INT_MIN;
+    map<string, int>::iterator it;
+    for ( it = hashMap.begin(); it != hashMap.end(); it++ )
+    {
+        answer = it->second > answer ? it->second : answer;
     }
-    
-    
+    cout<<answer<<endl;
     return 0;
 }
 
