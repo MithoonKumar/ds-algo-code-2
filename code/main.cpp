@@ -15,45 +15,65 @@
 using namespace std;
 #define faster  ios_base::sync_with_stdio(false); cin.tie(NULL)
 
-bool compareFunc(string str1, string str2) {
-    return str1.length()<str2.length();
+int findCategory(char c) {
+    if (c>='0' && c<='9') {
+        return 1;
+    } else if (c>='A' && c<='Z') {
+        return 2;
+    } else if (c>='a' && c<='z') {
+        return 3;
+    } else {
+        return 0;
+    }
 }
 
 int main(){
     freopen("/Users/mithoon.k/Documents/github-repo/ds-algo-code/code/code/input.txt","r",stdin);
     faster;
-    int n;
-    cin>>n;
-    vector<string>vecString;
-    for(int i=0; i<n; i++) {
-        string str;
-        cin>>str;
-        vecString.push_back(str);
-    }
-    map<string, int>hashMap;
-    for(int i=0; i<n; i++) {
-        hashMap[vecString[i]] = 0;
-    }
-    sort(vecString.begin(), vecString.end(), compareFunc);
+    int t;
+    cin>>t;
     
-    for(int i=0; i<vecString.size(); i++) {
-        string iStr = vecString[i];
-        for(int j=0; j<iStr.length(); j++) {
-            iStr.erase(j, 1);
-            if (hashMap.find(iStr) != hashMap.end() && hashMap[iStr] + 1 > hashMap[vecString[i]]) {
-                hashMap[vecString[i]] = hashMap[iStr] + 1;
-            }
-            iStr = vecString[i];
+    string str;
+    int count  = 0;
+    while (getline(cin, str)){
+        count++;
+        if (count==1) {
+            continue;
         }
+        int leftPointer = 0, rightPointer = (int)str.length()-1;
+        bool answer = true;
+        while(rightPointer>=leftPointer) {
+            int leftCategory = findCategory(str[leftPointer]);
+            int rightCategory = findCategory(str[rightPointer]);
+            if(leftCategory && rightCategory) {
+                if(leftCategory == rightCategory && str[rightPointer] == str[leftPointer]) {
+                    rightPointer--;
+                    leftPointer++;
+                    continue;
+                }
+                if(leftCategory == 2 && rightCategory ==3 && str[leftPointer] + 'a' - 'A' == str[rightPointer]) {
+                    rightPointer--;
+                    leftPointer++;
+                    continue;
+                }
+                if(leftCategory == 3 && rightCategory ==2 && str[leftPointer] - 'a' + 'A' == str[rightPointer]) {
+                    rightPointer--;
+                    leftPointer++;
+                    continue;
+                }
+                answer = false;
+                break;
+            } else if(leftCategory == 0 && rightCategory == 0) {
+                leftPointer++;
+                rightPointer--;
+            } else if (rightCategory == 0) {
+                rightPointer--;
+            } else {
+                leftPointer++;
+            }
+        }
+        answer? cout<<"YES"<<endl: cout<<"NO"<<endl;
     }
-    
-    int answer = INT_MIN;
-    map<string, int>::iterator it;
-    for ( it = hashMap.begin(); it != hashMap.end(); it++ )
-    {
-        answer = it->second > answer ? it->second : answer;
-    }
-    cout<<answer<<endl;
     return 0;
 }
 
