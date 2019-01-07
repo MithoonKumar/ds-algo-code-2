@@ -15,65 +15,65 @@
 using namespace std;
 #define faster  ios_base::sync_with_stdio(false); cin.tie(NULL)
 
-int findCategory(char c) {
-    if (c>='0' && c<='9') {
-        return 1;
-    } else if (c>='A' && c<='Z') {
-        return 2;
-    } else if (c>='a' && c<='z') {
-        return 3;
+
+/*Please note that it's Function problem i.e.
+ you need to write your solution in the form of Function(s) only.
+ Driver Code to call/invoke your function is mentioned above.*/
+
+//Structure of the Node of the binary tree is as
+ struct Node
+ {
+ int data;
+ struct Node *left;
+ struct Node *right;
+ };
+ 
+// function should return the root of the new binary tree formed
+Node * createBinaryTree(Node *root, int pre[], char preLN[], int &pos) {
+    Node *newNode = new Node();
+    newNode->left = NULL;
+    newNode->right = NULL;
+    newNode->data = pre[pos];
+    if(preLN[pos] == 'L') {
+        pos++;
+        return newNode;
     } else {
-        return 0;
+        pos++;
+        newNode->left = createBinaryTree(newNode->left, pre, preLN, pos);
+        newNode->right = createBinaryTree(newNode->right, pre, preLN, pos);
     }
+    return newNode;
+}
+
+struct Node *constructTree(int n, int pre[], char preLN[])
+{
+    Node *root = NULL;
+    if (n == 0) {
+        return root;
+    }
+    int pos = 0;
+    root = createBinaryTree(root, pre, preLN, pos);
+    return root;
 }
 
 int main(){
     freopen("/Users/mithoon.k/Documents/github-repo/ds-algo-code/code/code/input.txt","r",stdin);
     faster;
-    int t;
-    cin>>t;
+    int n;
+    cin>>n;
+    int pre[n];
+    char preLN[n];
     
-    string str;
-    int count  = 0;
-    while (getline(cin, str)){
-        count++;
-        if (count==1) {
-            continue;
-        }
-        int leftPointer = 0, rightPointer = (int)str.length()-1;
-        bool answer = true;
-        while(rightPointer>=leftPointer) {
-            int leftCategory = findCategory(str[leftPointer]);
-            int rightCategory = findCategory(str[rightPointer]);
-            if(leftCategory && rightCategory) {
-                if(leftCategory == rightCategory && str[rightPointer] == str[leftPointer]) {
-                    rightPointer--;
-                    leftPointer++;
-                    continue;
-                }
-                if(leftCategory == 2 && rightCategory ==3 && str[leftPointer] + 'a' - 'A' == str[rightPointer]) {
-                    rightPointer--;
-                    leftPointer++;
-                    continue;
-                }
-                if(leftCategory == 3 && rightCategory ==2 && str[leftPointer] - 'a' + 'A' == str[rightPointer]) {
-                    rightPointer--;
-                    leftPointer++;
-                    continue;
-                }
-                answer = false;
-                break;
-            } else if(leftCategory == 0 && rightCategory == 0) {
-                leftPointer++;
-                rightPointer--;
-            } else if (rightCategory == 0) {
-                rightPointer--;
-            } else {
-                leftPointer++;
-            }
-        }
-        answer? cout<<"YES"<<endl: cout<<"NO"<<endl;
+    for(int i=0; i<n; i++) {
+        cin>>pre[i];
     }
+    
+    for(int i=0; i<n; i++) {
+        cin>>preLN[i];
+    }
+    cout<<endl;
+    Node * root;
+    root = constructTree(n, pre, preLN);
     return 0;
 }
 
