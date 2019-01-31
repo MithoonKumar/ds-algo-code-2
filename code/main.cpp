@@ -16,17 +16,28 @@ using namespace std;
 #define faster  ios_base::sync_with_stdio(false); cin.tie(NULL)
 
 
-bool checkIfHalfSum(long long * arr, int index, long long halfSum) {
-    if (halfSum == 0) {
-        return true;
+bool checkIfHalfSum(int * arr, int n, int halfSum) {
+    bool dpArr[halfSum+1][n];
+    for (int j=0; j<n; j++) {
+        dpArr[0][j] = true;
     }
-    if (halfSum < 0) {
-        return false;
+    
+    for(int i=1; i<=halfSum; i++) {
+        if (i == arr[0]) {
+            dpArr[i][0] = true;
+        } else {
+            dpArr[i][0] = false;
+        }
     }
-    if (index < 0) {
-        return false;
+    
+    for (int i=1; i<=halfSum; i++) {
+        for (int j=1; j<n; j++) {
+            int first = dpArr[i][j-1];
+            int second = i - arr[j] >=0 ? dpArr[i - arr[j]][j-1] : false;
+            dpArr[i][j] = first ||second;
+        }
     }
-    return checkIfHalfSum(arr, index-1, halfSum-arr[index]) || checkIfHalfSum(arr, index-1, halfSum);
+    return dpArr[halfSum][n-1];
 }
 
 int main(){
@@ -37,22 +48,28 @@ int main(){
     while(t--) {
         int n;
         cin>>n;
-        long long arr[n];
-        long long sum = 0;
+        int arr[n];
+        int sum = 0;
         for (int i=0; i<n; i++) {
             cin>>arr[i];
             sum+=arr[i];
         }
         if ((sum%2) != 0) {
-            cout<<0<<endl;
+            cout<<"NO"<<endl;
         } else {
-            long long halfSum = sum/2;
-            cout<<checkIfHalfSum(arr, n-1, halfSum);
+            int halfSum = sum/2;
+            int ans = checkIfHalfSum(arr, n-1, halfSum);
+            if (ans) {
+                cout<<"YES"<<endl;
+            } else {
+                cout<<"NO"<<endl;
+            }
         }
         
     }
     
     return 0;
 }
+
 
 
