@@ -15,33 +15,42 @@
 using namespace std;
 #define faster  ios_base::sync_with_stdio(false); cin.tie(NULL)
 
-bool compareFunc(string str1, string str2) {
-    string str3 = str1 + str2;
-    string str4 = str2 + str1;
-    if (str3 > str4) {
+
+bool checkIfHalfSum(long long * arr, int index, long long halfSum) {
+    if (halfSum == 0) {
         return true;
-    } else {
+    }
+    if (halfSum < 0) {
         return false;
     }
+    if (index < 0) {
+        return false;
+    }
+    return checkIfHalfSum(arr, index-1, halfSum-arr[index]) || checkIfHalfSum(arr, index-1, halfSum);
 }
 
 int main(){
     freopen("/Users/mithoon.k/Documents/github-repo/ds-algo-code/code/code/input.txt","r",stdin);
     faster;
-    int n;
-    cin>>n;
-    vector<string> vec;
-    for(int i=0; i<n; i++) {
-        string temp;
-        cin>>temp;
-        vec.push_back(temp);
+    int t;
+    cin>>t;
+    while(t--) {
+        int n;
+        cin>>n;
+        long long arr[n];
+        long long sum = 0;
+        for (int i=0; i<n; i++) {
+            cin>>arr[i];
+            sum+=arr[i];
+        }
+        if ((sum%2) != 0) {
+            cout<<0<<endl;
+        } else {
+            long long halfSum = sum/2;
+            cout<<checkIfHalfSum(arr, n-1, halfSum);
+        }
+        
     }
-    sort(vec.begin(), vec.end(), compareFunc);
-    string answer;
-    for(int i=0; i<n; i++) {
-        answer = answer + vec[i];
-    }
-    cout<<answer<<endl;
     
     return 0;
 }
