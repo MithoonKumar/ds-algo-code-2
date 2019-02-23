@@ -15,59 +15,65 @@
 using namespace std;
 #define faster  ios_base::sync_with_stdio(false); cin.tie(NULL)
 
-
-bool checkIfHalfSum(int * arr, int n, int halfSum) {
-    bool dpArr[halfSum+1][n];
-    for (int j=0; j<n; j++) {
-        dpArr[0][j] = true;
+int findIndex(vector<int>vec, int s, int e) {
+    if(s == e) {
+        return s;
     }
-    
-    for(int i=1; i<=halfSum; i++) {
-        if (i == arr[0]) {
-            dpArr[i][0] = true;
-        } else {
-            dpArr[i][0] = false;
+    if (vec[s]<vec[e]) {
+        return s;
+    }
+    int mid = (s+e)/2;
+    if (mid-1>=0) {
+        if (vec[mid]<vec[mid-1]) {
+            return mid;
         }
     }
-    
-    for (int i=1; i<=halfSum; i++) {
-        for (int j=1; j<n; j++) {
-            int first = dpArr[i][j-1];
-            int second = i - arr[j] >=0 ? dpArr[i - arr[j]][j-1] : false;
-            dpArr[i][j] = first ||second;
-        }
+    if (vec[mid] > vec[s]) {
+        return findIndex(vec, mid+1, e);
+    } else {
+        return findIndex(vec, s, mid-1);
     }
-    return dpArr[halfSum][n-1];
 }
+
+int binarySearch(vector<int> vec, int s, int e, int num) {
+    if(s>e) {
+        return -1;
+    }
+    int mid = (s+e)/2;
+    if (vec[mid] == num) {
+        return mid;
+    }
+    if (vec[mid]<num) {
+        return binarySearch(vec, mid+1 , e, num);
+    } else {
+        return binarySearch(vec, s, mid-1, num);
+    }
+}
+
+
 
 int main(){
     freopen("/Users/mithoon.k/Documents/github-repo/ds-algo-code/code/code/input.txt","r",stdin);
     faster;
-    int t;
-    cin>>t;
-    while(t--) {
-        int n;
-        cin>>n;
-        int arr[n];
-        int sum = 0;
-        for (int i=0; i<n; i++) {
-            cin>>arr[i];
-            sum+=arr[i];
-        }
-        if ((sum%2) != 0) {
-            cout<<"NO"<<endl;
-        } else {
-            int halfSum = sum/2;
-            int ans = checkIfHalfSum(arr, n-1, halfSum);
-            if (ans) {
-                cout<<"YES"<<endl;
-            } else {
-                cout<<"NO"<<endl;
-            }
-        }
-        
+    int n;
+    cin>>n;
+    vector<int>A;
+    for (int i=0; i<n; i++) {
+        int temp;
+        cin>>temp;
+        cout<<temp<<" ";
+        A.push_back(temp);
     }
-    
+    int B;
+    cin>>B;
+    int partition = findIndex(A, 0 ,A.size()-1);
+    int index1 = binarySearch(A, 0, partition-1, B);
+    int index2 = binarySearch(A, partition, A.size()-1, B);
+    if (index1 != -1) {
+        cout<<index1<<endl;
+    } else {
+        cout<<index2<<endl;
+    }
     return 0;
 }
 
