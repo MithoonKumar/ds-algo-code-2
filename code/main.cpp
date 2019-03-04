@@ -15,47 +15,66 @@
 using namespace std;
 #define faster  ios_base::sync_with_stdio(false); cin.tie(NULL)
 
-int binarySearch(vector<int>balls, int s, int e, int index) {
-    int mid = (s+e)/2;
-    int midVal = balls[mid];
-    if (midVal == index) {
-        return mid;
+int arr[1000][1000];
+
+void recurse(vector<string>tempVec, vector<vector<string>>&ans, int currPos, int len, string &s) {
+    if (currPos == len) {
+        cout<<"answering"<<endl;
+        ans.push_back(tempVec);
+        return;
     }
-    if (index > midVal && balls[mid+1] >=index) {
-        return mid+1;
-    }
-    if (index > midVal && balls[mid+1] <index) {
-         return binarySearch(balls, mid+1, e, index);
-    }
-    if (index<midVal && mid == 0) {
-        return mid;
-    }
-    if (index<midVal && balls[mid-1] < index) {
-        return mid;
-    } else {
-        return binarySearch(balls, s, mid-1, index);
+    for(int i=currPos; i<len; i++) {
+        int tempLength = i - currPos + 1;
+        if (arr[currPos][i]) {
+            tempVec.push_back(s.substr(currPos, tempLength));
+            recurse(tempVec, ans, i+1, len, s);
+            tempVec.pop_back();
+        }
     }
 }
+
+vector<vector<string>> partition(string s) {
+    int size = s.size();
+    for (int i=0; i<s.size(); i++) {
+        for (int j=0; j<s.size(); j++) {
+            arr[i][j] = false;
+        }
+    }
+    for (int i=0; i<s.size(); i++) {
+        arr[i][i] = true;
+    }
+    for (int i=0; i<s.size()-1; i++) {
+        if (s[i] == s[i+1]) {
+            arr[i][i+1] = true;
+        } else {
+            arr[i][i+1] = false;
+        }
+    }
+    
+    for (int j=2; j<size; j++) {
+        for (int i=j-2; i>=0; i--) {
+            if (s[i] == s[j] && arr[i+1][j-1]) {
+                arr[i][j] = true;
+            } else {
+                arr[i][j] = false;
+            }
+        }
+    }
+    vector<vector<string>>ans;
+    vector<string>tempVec;
+    cout<<"Hello"<<endl;
+    recurse(tempVec, ans, 0, s.size(), s);
+    cout<<"answered"<<endl;
+    return ans;
+}
+
 
 int main(){
     freopen("/Users/mithoon.k/Documents/github-repo/ds-algo-code/code/code/input.txt","r",stdin);
     faster;
-    int n;
-    cin>>n;
-    vector<int> balls;
-    for (int i=0; i<n; i++) {
-        int val;
-        cin>>val;
-        balls.push_back(val);
-    }
-    int ballIndex;
-    cin>>ballIndex;
-    vector<int> cum;
-    cum.push_back(balls[0]);
-    for (int i=1; i<balls.size(); i++) {
-        cum.push_back(cum[i-1] + balls[i]);
-    }
-    cout<<binarySearch(cum, 0, balls.size()-1, ballIndex) + 1;
+    string str;
+    cin>>str;
+    partition(str);
     return 0;
 }
 
