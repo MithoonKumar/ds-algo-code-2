@@ -15,65 +15,47 @@
 using namespace std;
 #define faster  ios_base::sync_with_stdio(false); cin.tie(NULL)
 
-int findIndex(vector<int>vec, int s, int e) {
-    if(s == e) {
-        return s;
-    }
-    if (vec[s]<vec[e]) {
-        return s;
-    }
+int binarySearch(vector<int>balls, int s, int e, int index) {
     int mid = (s+e)/2;
-    if (mid-1>=0) {
-        if (vec[mid]<vec[mid-1]) {
-            return mid;
-        }
-    }
-    if (vec[mid] > vec[s]) {
-        return findIndex(vec, mid+1, e);
-    } else {
-        return findIndex(vec, s, mid-1);
-    }
-}
-
-int binarySearch(vector<int> vec, int s, int e, int num) {
-    if(s>e) {
-        return -1;
-    }
-    int mid = (s+e)/2;
-    if (vec[mid] == num) {
+    int midVal = balls[mid];
+    if (midVal == index) {
         return mid;
     }
-    if (vec[mid]<num) {
-        return binarySearch(vec, mid+1 , e, num);
+    if (index > midVal && balls[mid+1] >=index) {
+        return mid+1;
+    }
+    if (index > midVal && balls[mid+1] <index) {
+         return binarySearch(balls, mid+1, e, index);
+    }
+    if (index<midVal && mid == 0) {
+        return mid;
+    }
+    if (index<midVal && balls[mid-1] < index) {
+        return mid;
     } else {
-        return binarySearch(vec, s, mid-1, num);
+        return binarySearch(balls, s, mid-1, index);
     }
 }
-
-
 
 int main(){
     freopen("/Users/mithoon.k/Documents/github-repo/ds-algo-code/code/code/input.txt","r",stdin);
     faster;
     int n;
     cin>>n;
-    vector<int>A;
+    vector<int> balls;
     for (int i=0; i<n; i++) {
-        int temp;
-        cin>>temp;
-        cout<<temp<<" ";
-        A.push_back(temp);
+        int val;
+        cin>>val;
+        balls.push_back(val);
     }
-    int B;
-    cin>>B;
-    int partition = findIndex(A, 0 ,A.size()-1);
-    int index1 = binarySearch(A, 0, partition-1, B);
-    int index2 = binarySearch(A, partition, A.size()-1, B);
-    if (index1 != -1) {
-        cout<<index1<<endl;
-    } else {
-        cout<<index2<<endl;
+    int ballIndex;
+    cin>>ballIndex;
+    vector<int> cum;
+    cum.push_back(balls[0]);
+    for (int i=1; i<balls.size(); i++) {
+        cum.push_back(cum[i-1] + balls[i]);
     }
+    cout<<binarySearch(cum, 0, balls.size()-1, ballIndex) + 1;
     return 0;
 }
 
