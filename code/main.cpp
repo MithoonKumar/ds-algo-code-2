@@ -15,66 +15,102 @@
 using namespace std;
 #define faster  ios_base::sync_with_stdio(false); cin.tie(NULL)
 
-int arr[1000][1000];
 
-void recurse(vector<string>tempVec, vector<vector<string>>&ans, int currPos, int len, string &s) {
-    if (currPos == len) {
-        cout<<"answering"<<endl;
-        ans.push_back(tempVec);
-        return;
-    }
-    for(int i=currPos; i<len; i++) {
-        int tempLength = i - currPos + 1;
-        if (arr[currPos][i]) {
-            tempVec.push_back(s.substr(currPos, tempLength));
-            recurse(tempVec, ans, i+1, len, s);
-            tempVec.pop_back();
+struct comb {
+    int r, c;
+};
+
+#include<queue>
+void bfs(int i, int j, vector<vector<bool>>&visited, vector<vector<char>>&grid) {
+    int totalRows = grid.size();
+    int totalCols = grid[0].size();
+    queue<comb>q;
+    comb c;
+    c.r = i;
+    c.c = j;
+    q.push(c);
+    visited[i][j] = true;
+    while(q.size()>0) {
+        //cout<<"Hello"<<endl;
+        comb topEle = q.front();
+        q.pop();
+        //left
+        if (topEle.c-1>=0 && !visited[topEle.r][topEle.c-1] &&grid[topEle.r][topEle.c-1] == '1' ) {
+            comb c;
+            c.r = topEle.r;
+            c.c = topEle.c-1;
+            q.push(c);
+            visited[topEle.r][topEle.c-1] = true;
         }
+        //right
+        if (topEle.c+1<totalCols && !visited[topEle.r][topEle.c+1] &&grid[topEle.r][topEle.c+1] == '1' ) {
+            comb c;
+            c.r = topEle.r;
+            c.c = topEle.c+1;
+            q.push(c);
+            visited[topEle.r][topEle.c+1] = true;
+        }
+        //top
+        if (topEle.r-1>=0 && !visited[topEle.r-1][topEle.c] &&grid[topEle.r-1][topEle.c] == '1' ) {
+            comb c;
+            c.r = topEle.r-1;
+            c.c = topEle.c;
+            q.push(c);
+            visited[topEle.r-1][topEle.c] = true;
+        }
+        //bottom
+        if (topEle.r+1<totalRows && !visited[topEle.r+1][topEle.c] &&grid[topEle.r+1][topEle.c+1] == '1' ) {
+            comb c;
+            c.r = topEle.r+1;
+            c.c = topEle.c;
+            q.push(c);
+            visited[topEle.r+1][topEle.c] = true;
+        }
+        
     }
 }
 
-vector<vector<string>> partition(string s) {
-    int size = s.size();
-    for (int i=0; i<s.size(); i++) {
-        for (int j=0; j<s.size(); j++) {
-            arr[i][j] = false;
+
+
+int numIslands(vector<vector<char>>& grid) {
+    vector<vector<bool>>visited;
+    int totalRows = grid.size();
+    int totalCols = grid[0].size();
+    for (int i=0; i<totalRows; i++) {
+        vector<bool>tempVec;
+        for (int j=0; j<totalCols; j++) {
+            tempVec.push_back(false);
         }
+        visited.push_back(tempVec);
     }
-    for (int i=0; i<s.size(); i++) {
-        arr[i][i] = true;
-    }
-    for (int i=0; i<s.size()-1; i++) {
-        if (s[i] == s[i+1]) {
-            arr[i][i+1] = true;
-        } else {
-            arr[i][i+1] = false;
-        }
-    }
-    
-    for (int j=2; j<size; j++) {
-        for (int i=j-2; i>=0; i--) {
-            if (s[i] == s[j] && arr[i+1][j-1]) {
-                arr[i][j] = true;
-            } else {
-                arr[i][j] = false;
+    int count = 0;
+    for (int i=0; i<totalRows; i++) {
+        for (int j=0; j<totalCols; j++) {
+            if (!visited[i][j] && grid[i][j] == '1') {
+                count++;
+                bfs(i, j, visited, grid);
             }
         }
     }
-    vector<vector<string>>ans;
-    vector<string>tempVec;
-    cout<<"Hello"<<endl;
-    recurse(tempVec, ans, 0, s.size(), s);
-    cout<<"answered"<<endl;
-    return ans;
+    return count;
 }
-
 
 int main(){
     freopen("/Users/mithoon.k/Documents/github-repo/ds-algo-code/code/code/input.txt","r",stdin);
     faster;
-    string str;
-    cin>>str;
-    partition(str);
+    vector<vector<char>>grid;
+    int r, c;
+    cin>>r>>c;
+    for (int i=0; i<r; i++) {
+        vector<char>tempVec;
+        for (int j=0; j<c; j++) {
+            char ch;
+            cin>>ch;
+            tempVec.push_back(ch);
+        }
+        grid.push_back(tempVec);
+    }
+    cout<<numIslands(grid);
     return 0;
 }
 
