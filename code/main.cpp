@@ -1,118 +1,106 @@
-#include<iostream>
-#include<vector>
-#include<algorithm>
-#include<string>
-#include<map>
-#include<queue>
-#include<stack>
-#include<math.h>
-#include<list>
-#include<set>
-#include<unordered_map>
-#include<sstream>
-#include<limits.h>
-#include<stdio.h>
+
+
+#include <map>
+#include <set>
+#include <list>
+#include <cmath>
+#include <ctime>
+#include <deque>
+#include <queue>
+#include <stack>
+#include <string>
+#include <bitset>
+#include <cstdio>
+#include <limits>
+#include <vector>
+#include <climits>
+#include <cstring>
+#include <cstdlib>
+#include <fstream>
+#include <numeric>
+#include <sstream>
+#include <iostream>
+#include <algorithm>
+#include <unordered_map>
+
 using namespace std;
-#define faster  ios_base::sync_with_stdio(false); cin.tie(NULL)
 
-
-struct comb {
-    int r, c;
-};
-
-#include<queue>
-void bfs(int i, int j, vector<vector<bool>>&visited, vector<vector<char>>&grid) {
-    int totalRows = grid.size();
-    int totalCols = grid[0].size();
-    queue<comb>q;
-    comb c;
-    c.r = i;
-    c.c = j;
-    q.push(c);
-    visited[i][j] = true;
-    while(q.size()>0) {
-        //cout<<"Hello"<<endl;
-        comb topEle = q.front();
-        q.pop();
-        //left
-        if (topEle.c-1>=0 && !visited[topEle.r][topEle.c-1] &&grid[topEle.r][topEle.c-1] == '1' ) {
-            comb c;
-            c.r = topEle.r;
-            c.c = topEle.c-1;
-            q.push(c);
-            visited[topEle.r][topEle.c-1] = true;
+vector<string> convert (string s) {
+    vector<string> vec;
+    string temp = "";
+    bool pushed = true;
+    for (int i=0; i<s.size(); i++) {
+        if (s[i] == ' ' && temp != "") {
+            vec.push_back(temp);
+            temp = "";
+            pushed = true;
+        } else {
+            temp.push_back(s[i]);
+            pushed = false;
         }
-        //right
-        if (topEle.c+1<totalCols && !visited[topEle.r][topEle.c+1] &&grid[topEle.r][topEle.c+1] == '1' ) {
-            comb c;
-            c.r = topEle.r;
-            c.c = topEle.c+1;
-            q.push(c);
-            visited[topEle.r][topEle.c+1] = true;
-        }
-        //top
-        if (topEle.r-1>=0 && !visited[topEle.r-1][topEle.c] &&grid[topEle.r-1][topEle.c] == '1' ) {
-            comb c;
-            c.r = topEle.r-1;
-            c.c = topEle.c;
-            q.push(c);
-            visited[topEle.r-1][topEle.c] = true;
-        }
-        //bottom
-        if (topEle.r+1<totalRows && !visited[topEle.r+1][topEle.c] &&grid[topEle.r+1][topEle.c+1] == '1' ) {
-            comb c;
-            c.r = topEle.r+1;
-            c.c = topEle.c;
-            q.push(c);
-            visited[topEle.r+1][topEle.c] = true;
-        }
-        
     }
+    if (!pushed) {
+        vec.push_back(temp);
+    }
+    return vec;
 }
 
-
-
-int numIslands(vector<vector<char>>& grid) {
-    vector<vector<bool>>visited;
-    int totalRows = grid.size();
-    int totalCols = grid[0].size();
-    for (int i=0; i<totalRows; i++) {
-        vector<bool>tempVec;
-        for (int j=0; j<totalCols; j++) {
-            tempVec.push_back(false);
-        }
-        visited.push_back(tempVec);
+bool oneLine (vector<string> vec) {
+    
+    int size = 0;
+    for (int i=0 ; i<vec.size(); i++) {
+        size = size + vec[i].size() + 1;
     }
+    if (size <= 30) {
+        return true;
+    }
+    return false;
+}
+
+int giveCount(vector<string> vec) {
     int count = 0;
-    for (int i=0; i<totalRows; i++) {
-        for (int j=0; j<totalCols; j++) {
-            if (!visited[i][j] && grid[i][j] == '1') {
+    int tempSize = 0;
+    int counter = 0;
+    while (counter<vec.size()) {
+        tempSize = vec[counter].size() + 1;
+        if (count > 9) {
+            if (tempSize > 24) {
                 count++;
-                bfs(i, j, visited, grid);
+            } else {
+                counter++;
+            }
+        } else {
+            if (tempSize > 23) {
+                count++;
+            } else {
+                counter++;
             }
         }
     }
     return count;
 }
 
-int main(){
+int main() {
     freopen("/Users/mithoon.k/Documents/github-repo/ds-algo-code/code/code/input.txt","r",stdin);
-    faster;
-    vector<vector<char>>grid;
-    int r, c;
-    cin>>r>>c;
-    for (int i=0; i<r; i++) {
-        vector<char>tempVec;
-        for (int j=0; j<c; j++) {
-            char ch;
-            cin>>ch;
-            tempVec.push_back(ch);
+    vector<string>vec;
+    string str;
+    while(true) {
+        getline(cin, str);
+        if (str == "") {
+            break;
+        } else {
+            vec.push_back(str);
         }
-        grid.push_back(tempVec);
     }
-    cout<<numIslands(grid);
+    
+    for (int i=0; i<vec.size(); i++) {
+        vector<string> strVec = convert(vec[i]);
+        if (oneLine(strVec)) {
+            cout<<1<<endl;
+        } else {
+            cout<<giveCount(strVec)<<endl;
+        }
+    }
     return 0;
 }
-
-
 
