@@ -1,5 +1,3 @@
-
-
 #include <map>
 #include <set>
 #include <list>
@@ -22,85 +20,92 @@
 #include <iostream>
 #include <algorithm>
 #include <unordered_map>
+using namespace std;
+
 
 using namespace std;
 
-vector<string> convert (string s) {
-    vector<string> vec;
-    string temp = "";
-    bool pushed = true;
-    for (int i=0; i<s.size(); i++) {
-        if (s[i] == ' ' && temp != "") {
-            vec.push_back(temp);
-            temp = "";
-            pushed = true;
-        } else {
-            temp.push_back(s[i]);
-            pushed = false;
+string ltrim(const string &);
+string rtrim(const string &);
+vector<string> split(const string &);
+
+/*
+ * Complete the 'isValid' function below.
+ *
+ * The function is expected to return a STRING.
+ * The function accepts INTEGER_ARRAY a as parameter.
+ */
+
+int findRight(vector<int>&a, int s, int e, int num) {
+    int right = -1;
+    for (int i=e; i>=s; i--) {
+        if (a[i]>num) {
+            right = i;
         }
     }
-    if (!pushed) {
-        vec.push_back(temp);
-    }
-    return vec;
+    return right;
 }
 
-bool oneLine (vector<string> vec) {
-    
-    int size = 0;
-    for (int i=0 ; i<vec.size(); i++) {
-        size = size + vec[i].size() + 1;
+int findLeft(vector<int>&a, int s, int e, int num) {
+    int left = -1;
+    for (int i=s; i<=e; i++) {
+        if (a[i]<num) {
+            left = i;
+        }
     }
-    if (size <= 30) {
+    return left;
+}
+bool checkTruth(vector<int>&a, int s, int e, int size) {
+    if (s>size || e>size) {
         return true;
+    }
+    int right = findRight(a, s+1, e, a[s]);
+    int left = findLeft(a, s+1, e, a[s]);
+    if (right!=-1 && left !=-1 && right>left) {
+        bool leftTrue = checkTruth(a, s+1, left, left);
+        bool rightTrue = checkTruth(a, right, e, e);
+        if (leftTrue && rightTrue) {
+            return true;
+        }
+    } else if (right == -1) {
+        bool leftTrue = checkTruth(a, s+1, left, left);
+        if (leftTrue) {
+            return true;
+        }
+    } else if (left == -1){
+        bool rightTrue = checkTruth(a, right, e, e);
+        if (rightTrue) {
+            return true;
+        }
     }
     return false;
 }
 
-int giveCount(vector<string> vec) {
-    int count = 0;
-    int tempSize = 0;
-    int counter = 0;
-    while (counter<vec.size()) {
-        tempSize = vec[counter].size() + 1;
-        if (count > 9) {
-            if (tempSize > 24) {
-                count++;
-            } else {
-                counter++;
-            }
+
+string isValid(vector<int> a) {
+    if (a.size() == 0) {
+        return "YES";
+    } else {
+        int size = a.size();
+        if (checkTruth(a, 0, size-1, size-1)) {
+            return "YES";
         } else {
-            if (tempSize > 23) {
-                count++;
-            } else {
-                counter++;
-            }
+            return "NO";
         }
     }
-    return count;
+    
 }
 
 int main() {
     freopen("/Users/mithoon.k/Documents/github-repo/ds-algo-code/code/code/input.txt","r",stdin);
-    vector<string>vec;
-    string str;
-    while(true) {
-        getline(cin, str);
-        if (str == "") {
-            break;
-        } else {
-            vec.push_back(str);
-        }
+    int n;
+    cin>>n;
+    vector<int>nums;
+    for (int i=0; i<n; i++) {
+        int temp;
+        cin>>temp;
+        nums.push_back(temp);
     }
-    
-    for (int i=0; i<vec.size(); i++) {
-        vector<string> strVec = convert(vec[i]);
-        if (oneLine(strVec)) {
-            cout<<1<<endl;
-        } else {
-            cout<<giveCount(strVec)<<endl;
-        }
-    }
+    cout<<isValid(nums)<<endl;;
     return 0;
 }
-
